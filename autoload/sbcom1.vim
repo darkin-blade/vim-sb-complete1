@@ -12,10 +12,10 @@ let g:sbcom1_wordnum = 0
 fun! sbcom1#isword()
   if (&filetype == "vim") " 特判vim格式,把#算进单词
     let g:sbcom1_isword = "[0-9a-zA-Z:_#]"
-    let g:sbcom1_issplit = "[`~@$%^&*=+\\[{\\]}\\|;'\",<.>/ \t]"
+    let g:sbcom1_issplit = ["`", "\\~", "!", "@", "$", "%", "^", "&", "*", "(", ")", "-", "=", "+", "[", "{", "]", "}", "\\", "|", ";", ":", "\'", "\"", ",", "<", "\\.", ">", "/", "?", " ", "\n", "\t"]
   else
     let g:sbcom1_isword = "[0-9a-zA-Z:_]"
-    let g:sbcom1_issplit = "[`~@#$%^&*=+\\[{\\]}\\|;'\",<.>/ \t]"
+    let g:sbcom1_issplit = ["`", "\\~", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "=", "+", "[", "{", "]", "}", "\\", "|", ";", ":", "\'", "\"", ",", "<", "\\.", ">", "/", "?", " ", "\n", "\t"]
   endif
 endfun
 
@@ -45,16 +45,18 @@ fun! sbcom1#find() " 主函数
   let theline = getline(line("."))
   let thehead = col(".") - 2
   let thetail = thehead
-  while ((match(theline[thehead], g:sbcom1_isword) != -1)&&(thehead >= 0))
+  while ((sbcom1#exist(theline[thehead], g:sbcom1_issplit) == 0)&&(thehead >= 0))
     let thehead -= 1
   endwhile
-  while ((match(theline[thetail], g:sbcom1_isword) != -1)&&(1))
+  while ((sbcom1#exist(theline[thetail], g:sbcom1_issplit) == 0)&&(thetail <= len(getline(line(".")))))
     let thetail += 1
   endwhile
   let thehead += 1
   let thetail -= 1
   let theword = theline[thehead:thetail]
   let thelen = len(theword)
+  echom theword
+  echom thelen
   if (thelen == 0)
     echom "invalid --sbcom1"
     return []
@@ -84,16 +86,12 @@ fun! sbcom1#find() " 主函数
     let linedown += 1
   endwhile
   let alltext_temp = alltext 
-  let alltext = []
-  for i in alltext_temp 
-    let alltext += split(i, g:sbcom1_issplit) " 先去除非转义,非单词字符
-  endfor 
-  for j in ["!", "(", ")", "-", "?"] " 去除转义字符
-    let alltext_temp = alltext  
+  for j in g:sbcom1_issplit
     let alltext = []
     for i in alltext_temp
       let alltext += split(i, j)
     endfor  
+    let alltext_temp = alltext  
   endfor 
   "==单词去重==
   let alltext_temp = alltext
@@ -110,6 +108,8 @@ fun! sbcom1#find() " 主函数
     let alltext += [i]
   endfor
   "==单词匹配==
+  let g:sbcom1_wordnth = 0
+  let g:sbcom1_wordnum = 0
   let g:sbcom1_matched = [] " 匹配的单词组成的list,清空
   for i in alltext
     if (match(i, theregular) == 0) " 找到正则匹配
@@ -134,8 +134,6 @@ endfun
 fun! sbcom1#replace(thelen, thetail)
   call cursor([line("."), a:thetail + 2])
   call complete(col(".") - a:thelen, [g:sbcom1_matched[g:sbcom1_wordnth]])
-  echom a:thetail
-  echom col(".") - 2
 endfun
 
 fun! sbcom1#fix(theword, thelen, alltext, thetail)
