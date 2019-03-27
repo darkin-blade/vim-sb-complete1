@@ -1,3 +1,14 @@
+" 全部匹配的单词
+let g:sbcom1_matched = []
+" 算进单词的部分,不包括中文字符
+let g:sbcom1_isword = ""
+" 不算进单词的部分
+let g:sbcom1_issplit = ""
+" 下一个切换的单词
+let g:sbcom1_wordnth = 0
+" 总共匹配数
+let g:sbcom1_wordnum = 0
+
 fun! sbcom1#isword()
   if (&filetype == "vim") " 特判vim格式,把#算进单词
     let g:sbcom1_isword = "[0-9a-zA-Z:_#]"
@@ -48,6 +59,15 @@ fun! sbcom1#find() " 主函数
     echom "invalid --sbcom1"
     return []
   endif
+  "==切换单词==
+  for i in g:sbcom1_matched " g:sbcom1_wordnum不能为0
+    if (i == theword) " 单词已经匹配过
+      let g:sbcom1_wordnth += 1
+      let g:sbcom1_wordnth = g:sbcom1_wordnth%g:sbcom1_wordnum " 循环
+      call sbcom1#replace(thelen, thetail)
+      return []
+    endif
+  endfor
   let theregular = sbcom1#insert(theword)
   "==获取全部单词==
   let lineup = line(".")
@@ -102,7 +122,8 @@ fun! sbcom1#find() " 主函数
   if (rightspell >= 1) " 目前的单词是有效的
     call add(g:sbcom1_matched, theword)
   endif
-  if (g:sbcom1_matched == [])
+  let g:sbcom1_wordnum = len(g:sbcom1_matched)
+  if (g:sbcom1_wordnum == 0)
     call sbcom1#fix(theword, thelen, alltext, thetail)
   else
     call sbcom1#replace(thelen, thetail)
@@ -112,7 +133,7 @@ endfun
 
 fun! sbcom1#replace(thelen, thetail)
   call cursor([line("."), a:thetail + 2])
-  call complete(col(".") - a:thelen, g:sbcom1_matched)
+  call complete(col(".") - a:thelen, [g:sbcom1_matched[g:sbcom1_wordnth]])
   echom a:thetail
   echom col(".") - 2
 endfun

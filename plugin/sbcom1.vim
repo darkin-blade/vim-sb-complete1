@@ -1,10 +1,3 @@
-" 全部匹配的单词
-let g:sbcom1_matched = []
-" 算进单词的部分,不包括中文字符
-let g:sbcom1_isword = ""
-" 不算进单词的部分
-let g:sbcom1_issplit = ""
-
 if (exists('g:sbcom1_active')&&(g:sbcom1_active != 0)) " 启动插件
   if (exists('g:sbcom1_trigger')) " 有自定义按键
     au BufEnter * execute("inoremap ".g:sbcom1_trigger." <c-r>=sbcom1#find()<cr>")
