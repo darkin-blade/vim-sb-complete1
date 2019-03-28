@@ -12,10 +12,10 @@ let g:sbcom1_wordnum = 0
 fun! sbcom1#isword()
   if (&filetype == "vim") " 特判vim格式,把#算进单词
     let g:sbcom1_isword = "[0-9a-zA-Z:_#]"
-    let g:sbcom1_issplit = ["`", "\\~", "!", "@", "$", "%", "^", "&", "*", "(", ")", "-", "=", "+", "[", "{", "]", "}", "\\", "|", ";", ":", "\'", "\"", ",", "<", "\\.", ">", "/", "?", " ", "\n", "\t"]
+    let g:sbcom1_issplit = ["`", "\\~", "!", "@", "$", "%", "^", "&", "*", "(", ")", "-", "=", "+", "[", "{", "]", "}", "\\", "|", ";", ":", "\'", "\"", ",", "<", ".", ">", "/", "?", " ", "\n", "\t"]
   else
     let g:sbcom1_isword = "[0-9a-zA-Z:_]"
-    let g:sbcom1_issplit = ["`", "\\~", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "=", "+", "[", "{", "]", "}", "\\", "|", ";", ":", "\'", "\"", ",", "<", "\\.", ">", "/", "?", " ", "\n", "\t"]
+    let g:sbcom1_issplit = ["`", "\\~", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "=", "+", "[", "{", "]", "}", "\\", "|", ";", ":", "\'", "\"", ",", "<", ".", ">", "/", "?", " ", "\n", "\t"]
   endif
 endfun
 
@@ -55,8 +55,6 @@ fun! sbcom1#find() " 主函数
   let thetail -= 1
   let theword = theline[thehead:thetail]
   let thelen = len(theword)
-  echom theword
-  echom thelen
   if (thelen == 0)
     echom "invalid --sbcom1"
     return []
@@ -87,6 +85,9 @@ fun! sbcom1#find() " 主函数
   endwhile
   let alltext_temp = alltext 
   for j in g:sbcom1_issplit
+    if (j == ".")
+      let j = "\\."
+    endif
     let alltext = []
     for i in alltext_temp
       let alltext += split(i, j)
