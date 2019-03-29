@@ -73,15 +73,19 @@ fun! sbcom1#find() " 主函数
   let lineup = line(".")
   let linedown = line(".") + 1
   let alltext = []
-  while ((lineup >= 1)||(linedown <= len(getline(0, 1000)))) " 按就近添加行
+  let textlen = len(getline(0, 1000))
+  while ((lineup >= 1)||(linedown <= textlen)) " 按就近添加行
     if (lineup >= 1)
       let alltext += getline(lineup, lineup)
     endif
-    if (linedown <= len(getline(0, 1000)))
+    if (linedown <= textlen)
       let alltext += getline(linedown, linedown)
     endif
     let lineup -= 1
     let linedown += 1
+    if (len(alltext) > g:sbcom1_maxline)
+      break
+    endif
   endwhile
   let alltext_temp = alltext 
   for j in g:sbcom1_issplit

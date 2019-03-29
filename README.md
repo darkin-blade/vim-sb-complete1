@@ -13,7 +13,7 @@ the most lightweight(SHA BI) completion plug of vim
 
 - support for words next to CJK
 
-### Installation
+## Installation
 
 - manual
     - put the `autoload/sbcom1.vim` to `~/.vim/autoload/`
@@ -23,7 +23,7 @@ the most lightweight(SHA BI) completion plug of vim
     - add `Plug 'niabie/vim-sb-complete2'` to your `~/.vimrc`
         - execute `:PlugInstall` in vim
 
-### Usage
+## Usage
 
 1. add this to `~/.vimrc`, to start-up the plug
 
@@ -47,9 +47,15 @@ another example, using a sequence `jkl` to replace `<tab>`
 let g:sbcom1_trigger = "jkl"
 ```
 
+3. Set the searching field. The script will search the words which are in the nearest `g:sbcom1_maxline` lines (default is 60)
+
+```vim
+let g:sbcom1_maxline = 30
+```
+
 Don't use this command in commandline directly
 
-### Uninstallation
+## Uninstallation
 
 - manual
     - delete `autoload/sbcom1.vim`
@@ -59,3 +65,6 @@ Don't use this command in commandline directly
     -  ~~`Plug 'niabie/vim-sb-complete2'`~~
         - execute `:PlugClean` in vim
 
+## TODO
+
+- The script is too slow
