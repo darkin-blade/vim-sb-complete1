@@ -1,7 +1,7 @@
 " 全部匹配的单词
 let g:sbcom1_matched = []
 " 算进单词的部分,不包括中文字符
-let g:sbcom1_isword = ""
+let g:sbcom1_isword = []
 " 不算进单词的部分
 let g:sbcom1_issplit = ""
 " 下一个切换的单词
@@ -11,10 +11,10 @@ let g:sbcom1_wordnum = 0
 
 fun! sbcom1#isword()
   if (&filetype == "vim") " 特判vim格式,把#算进单词
-    let g:sbcom1_isword = "[0-9a-zA-Z:_#]"
+    let g:sbcom1_isword = ["[0-9a-zA-Z:_#]"]
     let g:sbcom1_issplit = ["`", "\\~", "!", "@", "$", "%", "^", "&", "*", "(", ")", "-", "=", "+", "[", "{", "]", "}", "\\", "|", ";", ":", "\'", "\"", ",", "<", ".", ">", "/", "?", " ", "\n", "\t"]
   else
-    let g:sbcom1_isword = "[0-9a-zA-Z:_]"
+    let g:sbcom1_isword = ["[0-9a-zA-Z:_]"]
     let g:sbcom1_issplit = ["`", "\\~", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "=", "+", "[", "{", "]", "}", "\\", "|", ";", ":", "\'", "\"", ",", "<", ".", ">", "/", "?", " ", "\n", "\t"]
   endif
 endfun
@@ -32,7 +32,8 @@ endfun
 
 fun! sbcom1#exist(elem, lists)
   for i in a:lists
-    if (a:elem == i)
+    " if (a:elem == i)
+    if (match(a:elem, i) != -1)
       return 1
     endif
   endfor
@@ -45,10 +46,10 @@ fun! sbcom1#find() " 主函数
   let theline = getline(line("."))
   let thehead = col(".") - 2
   let thetail = thehead
-  while ((sbcom1#exist(theline[thehead], g:sbcom1_issplit) == 0)&&(thehead >= 0))
+  while ((sbcom1#exist(theline[thehead], g:sbcom1_isword) == 1)&&(thehead >= 0))
     let thehead -= 1
   endwhile
-  while ((sbcom1#exist(theline[thetail], g:sbcom1_issplit) == 0)&&(thetail <= len(getline(line(".")))))
+  while ((sbcom1#exist(theline[thetail], g:sbcom1_isword) == 1)&&(thetail <= len(getline(line(".")))))
     let thetail += 1
   endwhile
   let thehead += 1
