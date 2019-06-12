@@ -6,7 +6,7 @@ if (exists('g:sbcom1_active')&&(g:sbcom1_active != 0)) " 启动插件
   endif
   au BufEnter * call sbcom1#isword()
   if (!exists('g:sbcom1_maxline')) " 有自定义最大长度
-    let g:sbcom1_maxline = 60
+    let g:sbcom1_maxline = 200
   endif
 endif
 

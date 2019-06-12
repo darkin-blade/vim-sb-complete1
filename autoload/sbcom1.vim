@@ -74,7 +74,7 @@ fun! sbcom1#find() " 主函数
   for i in g:sbcom1_matched " g:sbcom1_wordnum不能为0
     if (i == theword) " 单词已经匹配过
       let g:sbcom1_wordnth += 1
-      let g:sbcom1_wordnth = g:sbcom1_wordnth%g:sbcom1_wordnum " 循环
+      let g:sbcom1_wordnth = g:sbcom1_wordnth % g:sbcom1_wordnum " 循环
       call sbcom1#replace(thelen, thetail)
       return []
     endif
